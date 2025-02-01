@@ -26,17 +26,16 @@ jobs:
       run: echo "$CHANGED_FILES"
 
     - name: Save Changed Files to Artifact
-      run: |
-        echo "$CHANGED_FILES" > changed_files.txt
+      run: echo "$CHANGED_FILES" > changed_files.txt
       shell: bash
 
     - name: Upload Impact Analysis Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: impact-analysis-report
         path: changed_files.txt
 
-
+    # Uncomment and update these steps as needed
     # - name: SonarQube Analysis
     #   run: mvn sonar:sonar -Dsonar.projectKey=my-java-app -Dsonar.organization=my-org
 
@@ -44,7 +43,7 @@ jobs:
     #   run: JArchitectConsole.exe MyJavaProject.jar /DependencyGraph > impact_report.txt
 
     # - name: Upload Impact Report
-    #   uses: actions/upload-artifact@v3
+    #   uses: actions/upload-artifact@v4
     #   with:
     #     name: impact-report
     #     path: impact_report.txt
