@@ -43,7 +43,7 @@ def analyze_changes(changed_files):
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "You are an assistant that explains code changes for black-box testing."},
+                    # {"role": "system", "content": "You are an assistant that explains code changes for black-box testing."},
                     {"role": "user", "content": f"Explain the impact of the following code changes for black-box testing:\n\n{changed_lines}"}
                 ],
                 max_tokens=150

@@ -15,7 +15,7 @@
  */
 
 //dummy
-
+//dummy2
 package org.springframework.samples.petclinic.model;
 
 import jakarta.persistence.Column;
