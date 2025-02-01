@@ -1,9 +1,24 @@
 import os
 import sys
+import subprocess
 import openai
 
 # Set your OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def get_changed_lines(file):
+    """Get the changed lines in a file using git diff."""
+    try:
+        result = subprocess.run(
+            ["git", "diff", "HEAD^", "HEAD", "--", file],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting diff for {file}: {e}")
+        return ""
 
 def analyze_changes(changed_files):
     print("Starting analysis of changed files...")
@@ -16,33 +31,26 @@ def analyze_changes(changed_files):
         report += f"Changes in {file}:\n"
         print(f"Analyzing file: {file}")
 
-        try:
-            with open(file, 'r') as f:
-                lines = f.readlines()
-            print(f"Read {len(lines)} lines from {file}")
-        except FileNotFoundError:
-            report += f"File {file} not found.\n\n"
-            print(f"File not found: {file}")
+        changed_lines = get_changed_lines(file)
+        if not changed_lines:
+            report += f"No changes found in {file}.\n\n"
+            print(f"No changes found in {file}.")
             continue
         
-        # Extract and analyze added lines
-        added_lines = [line[1:] for line in lines if line.startswith('+') and not line.startswith('+++')]
-        print(f"Found {len(added_lines)} added lines in {file}")
+        print(f"Changed lines in {file}:\n{changed_lines}")
 
-        for line in added_lines:
-            print(f"Analyzing line: {line.strip()}")
-            try:
-                response = openai.Completion.create(
-                    model="text-davinci-003",
-                    prompt=f"Explain the following code change for black-box testing:\n\n{line}",
-                    max_tokens=50
-                )
-                explanation = response.choices[0].text.strip()
-                report += f"Code: {line}\nExplanation: {explanation}\n\n"
-                print(f"Generated explanation: {explanation}")
-            except Exception as e:
-                report += f"Error generating explanation for {line}: {str(e)}\n\n"
-                print(f"Error generating explanation for {line}: {str(e)}")
+        try:
+            response = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=f"Explain the impact of the following code changes for black-box testing:\n\n{changed_lines}",
+                max_tokens=150
+            )
+            explanation = response.choices[0].text.strip()
+            report += f"Changed Lines:\n{changed_lines}\nExplanation:\n{explanation}\n\n"
+            print(f"Generated explanation: {explanation}")
+        except Exception as e:
+            report += f"Error generating explanation for changes in {file}: {str(e)}\n\n"
+            print(f"Error generating explanation for changes in {file}: {str(e)}")
 
     with open("impact_analysis_report.txt", "w") as report_file:
         report_file.write(report)
