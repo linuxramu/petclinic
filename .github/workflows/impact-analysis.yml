@@ -21,7 +21,7 @@ jobs:
         git fetch --all
         CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep '\.java$')
         echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
-      shell: /usr/bin/bash -e
+      shell: bash
 
     - name: Display Changed Java Files
       run: echo "$CHANGED_FILES"
