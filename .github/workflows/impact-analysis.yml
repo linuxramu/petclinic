@@ -12,16 +12,30 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 2 # Ensures we have at least one previous commit for comparison
 
     - name: Get Changed Files
       id: changed-files
       run: |
-        git fetch origin main
-        echo "CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)" >> $GITHUB_ENV
-    
+        git fetch --all
+        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+
     - name: Display Changed Files
       run: echo "$CHANGED_FILES"
-    
+
+    - name: Save Changed Files to Artifact
+      run: |
+        echo "$CHANGED_FILES" > changed_files.txt
+      shell: bash
+
+    - name: Upload Impact Analysis Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: impact-analysis-report
+        path: changed_files.txt
+
 
     # - name: SonarQube Analysis
     #   run: mvn sonar:sonar -Dsonar.projectKey=my-java-app -Dsonar.organization=my-org
