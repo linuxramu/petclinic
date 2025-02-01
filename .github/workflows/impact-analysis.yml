@@ -33,7 +33,7 @@ jobs:
         python-version: '3.x'
 
     - name: Install OpenAI Library
-      run: pip install openai --upgrade
+      run: pip install openai==0.28
 
     - name: Analyze Code Changes
       env:
