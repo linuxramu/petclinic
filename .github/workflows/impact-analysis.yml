@@ -15,14 +15,14 @@ jobs:
       with:
         fetch-depth: 2 # Ensures we have at least one previous commit for comparison
 
-    - name: Get Changed Files
+    - name: Get Changed Java Files
       id: changed-files
       run: |
         git fetch --all
-        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep '\.java$')
         echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
 
-    - name: Display Changed Files
+    - name: Display Changed Java Files
       run: echo "$CHANGED_FILES"
 
     - name: Save Changed Files to Artifact
