@@ -1,0 +1,36 @@
+name: Impact Analysis Report
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  impact-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Get Changed Files
+      id: changed-files
+      run: |
+        git fetch origin main
+        echo "CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)" >> $GITHUB_ENV
+    
+    - name: Display Changed Files
+      run: echo "$CHANGED_FILES"
+    
+
+    # - name: SonarQube Analysis
+    #   run: mvn sonar:sonar -Dsonar.projectKey=my-java-app -Dsonar.organization=my-org
+
+    # - name: Run JArchitect
+    #   run: JArchitectConsole.exe MyJavaProject.jar /DependencyGraph > impact_report.txt
+
+    # - name: Upload Impact Report
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: impact-report
+    #     path: impact_report.txt
