@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 //dummy code
-//dummy code - line2
 package org.springframework.samples.petclinic.model;
 
 import jakarta.persistence.Column;
