@@ -25,6 +25,7 @@ jobs:
 
     - name: Display Changed Java Files
       run: echo "$CHANGED_FILES"
+      shell: bash
 
     - name: Set up Python
       uses: actions/setup-python@v3
@@ -39,6 +40,7 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
         python analyze_changes.py "$CHANGED_FILES"
+      shell: bash
 
     - name: Upload Impact Analysis Report
       uses: actions/upload-artifact@v4
