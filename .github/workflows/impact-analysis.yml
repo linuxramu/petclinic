@@ -21,29 +21,27 @@ jobs:
         git fetch --all
         CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep '\.java$')
         echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+      shell: /usr/bin/bash -e
 
     - name: Display Changed Java Files
       run: echo "$CHANGED_FILES"
 
-    - name: Save Changed Files to Artifact
-      run: echo "$CHANGED_FILES" > changed_files.txt
-      shell: bash
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
+
+    - name: Install OpenAI Library
+      run: pip install openai
+
+    - name: Analyze Code Changes
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        python analyze_changes.py "$CHANGED_FILES"
 
     - name: Upload Impact Analysis Report
       uses: actions/upload-artifact@v4
       with:
         name: impact-analysis-report
-        path: changed_files.txt
-
-    # Uncomment and update these steps as needed
-    # - name: SonarQube Analysis
-    #   run: mvn sonar:sonar -Dsonar.projectKey=my-java-app -Dsonar.organization=my-org
-
-    # - name: Run JArchitect
-    #   run: JArchitectConsole.exe MyJavaProject.jar /DependencyGraph > impact_report.txt
-
-    # - name: Upload Impact Report
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: impact-report
-    #     path: impact_report.txt
+        path: impact_analysis_report.txt
