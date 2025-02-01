@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// code comments
+
 package org.springframework.samples.petclinic.model;
 
 import org.springframework.beans.support.MutableSortDefinition;
