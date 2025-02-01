@@ -40,12 +40,15 @@ def analyze_changes(changed_files):
         print(f"Changed lines in {file}:\n{changed_lines}")
 
         try:
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=f"Explain the impact of the following code changes for black-box testing:\n\n{changed_lines}",
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are an assistant that explains code changes for black-box testing."},
+                    {"role": "user", "content": f"Explain the impact of the following code changes for black-box testing:\n\n{changed_lines}"}
+                ],
                 max_tokens=150
             )
-            explanation = response.choices[0].text.strip()
+            explanation = response['choices'][0]['message']['content'].strip()
             report += f"Changed Lines:\n{changed_lines}\nExplanation:\n{explanation}\n\n"
             print(f"Generated explanation: {explanation}")
         except Exception as e:
