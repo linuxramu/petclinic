@@ -17,29 +17,20 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void saveUser(User user) {
 
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+        if(user.getRoles() == null || user.getRoles().isEmpty()) {
             throw new IllegalArgumentException("User must have at least a role set!");
         }
 
         for (Role role : user.getRoles()) {
-            if (!role.getName().startsWith("ROLE_")) {
+            if(!role.getName().startsWith("ROLE_")) {
                 role.setName("ROLE_" + role.getName());
             }
 
-            if (role.getUser() == null) {
+            if(role.getUser() == null) {
                 role.setUser(user);
             }
         }
 
         userRepository.save(user);
-    }
-
-    @Override
-    @Transactional
-    public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
-
-        userRepository.delete(user);
     }
 }
