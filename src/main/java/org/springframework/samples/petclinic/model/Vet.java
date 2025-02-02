@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springframework.samples.petclinic.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -73,6 +74,10 @@ public class Vet extends Person {
     }
 
     public void clearSpecialties() {
+        getSpecialtiesInternal().clear();
+    }
+    
+    public void clearSpecialtiesAll() {
         getSpecialtiesInternal().clear();
     }
 
