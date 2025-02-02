@@ -32,7 +32,7 @@ jobs:
         
             echo "changed=$CHANGED_FILES" >> $GITHUB_ENV
             echo "::set-output name=changed::$CHANGED_FILES"
-          shell: bash
+        shell: bash
         
 
   impact-analysis:
@@ -106,7 +106,7 @@ jobs:
           path: index.html
 
   deploy:
-    name: Deploy to GitHub Pages
+    name: Update GitHub Pages
     needs: generate-report
     runs-on: ubuntu-latest
     steps:
