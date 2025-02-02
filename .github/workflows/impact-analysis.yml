@@ -34,6 +34,8 @@ jobs:
     name: Analyze Impact of Changes
     needs: setup
     runs-on: ubuntu-latest
+    outputs:
+      analysis_done: ${{ steps.analysis.outputs.done }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -46,11 +48,30 @@ jobs:
       - name: Install Dependencies
         run: pip install openai==0.28
 
-      - name: Run Code Analysis
+      - name: Check if Code Changes Exist
+        id: check-changes
+        run: |
+          if [[ -z "${{ needs.setup.outputs.changed_files }}" ]]; then
+            echo "NO_CODE_CHANGES=true" >> $GITHUB_ENV
+          else
+            echo "NO_CODE_CHANGES=false" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Run Code Analysis (If Changes Exist)
+        if: env.NO_CODE_CHANGES == 'false'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python analyze_changes.py "${{ needs.setup.outputs.changed_files }}"
+        shell: bash
+
+      - name: Generate No Changes Report
+        id: analysis
+        if: env.NO_CODE_CHANGES == 'true'
+        run: |
+          echo "No code changes detected" > impact_analysis_report.txt
+          echo "::set-output name=done::true"
         shell: bash
 
   generate-report:
