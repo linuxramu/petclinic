@@ -10,4 +10,7 @@ public class Roles {
     public final String ADMIN = "ROLE_ADMIN";
     public final String ADMIN_SUPREME = "ROLE_ADMIN_SUPREME";
     public final String ADMIN_SUPREME1 = "ROLE_ADMIN_SUPREME1";
+    public final String ADMIN_SUPREME2 = "ROLE_ADMIN_SUPREME2";
+    public final String ADMIN_SUPREME3 = "ROLE_ADMIN_SUPREME3";
+    public final String ADMIN_SUPREME4 = "ROLE_ADMIN_SUPREME4";
 }
