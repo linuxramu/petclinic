@@ -20,15 +20,20 @@ jobs:
       - name: Get Changed Java Files
         id: changed-files
         run: |
-          git fetch --all
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep '\.java$' || true)
-          echo "changed=$CHANGED_FILES" >> $GITHUB_ENV
-          echo "::set-output name=changed::$CHANGED_FILES"
-        shell: bash
-
-      - name: Display Changed Java Files
-        run: echo "$CHANGED_FILES"
-        shell: bash
+            git fetch --all
+        
+            # Check if we have at least two commits
+            if git rev-parse HEAD^ >/dev/null 2>&1; then
+              CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep '\.java$' || true)
+            else
+              echo "Only one commit found, skipping diff check."
+              CHANGED_FILES=""
+            fi
+        
+            echo "changed=$CHANGED_FILES" >> $GITHUB_ENV
+            echo "::set-output name=changed::$CHANGED_FILES"
+          shell: bash
+        
 
   impact-analysis:
     name: Analyze Impact of Changes
