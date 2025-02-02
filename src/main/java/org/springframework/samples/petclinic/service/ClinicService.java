@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// code dummy
 package org.springframework.samples.petclinic.service;
 
 import java.util.Collection;
