@@ -13,6 +13,7 @@ import java.util.Collection;
 /**
  * Map Pet & PetDto using mapstruct
  */
+
 @Mapper(uses = VisitMapper.class)
 public interface PetMapper {
 
@@ -36,4 +37,26 @@ public interface PetMapper {
     PetType toPetType(PetTypeDto petTypeDto);
 
     Collection<PetTypeDto> toPetTypeDtos(Collection<PetType> petTypes);
+
+    // New mappers added
+
+    @Mapping(source = "visit.id", target = "visitId")
+    VisitDto toVisitDto(Visit visit);
+
+    Collection<VisitDto> toVisitsDto(Collection<Visit> visits);
+
+    @Mapping(source = "visitId", target = "visit.id")
+    Visit toVisit(VisitDto visitDto);
+
+    Collection<Visit> toVisits(Collection<VisitDto> visitDtos);
+
+    @Mapping(source = "vet.id", target = "vetId")
+    VetDto toVetDto(Vet vet);
+
+    Collection<VetDto> toVetsDto(Collection<Vet> vets);
+
+    @Mapping(source = "vetId", target = "vet.id")
+    Vet toVet(VetDto vetDto);
+
+    Collection<Vet> toVets(Collection<VetDto> vetDtos);
 }

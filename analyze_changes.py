@@ -44,7 +44,7 @@ def analyze_changes(changed_files):
                 model="gpt-3.5-turbo",
                 messages=[
                     # {"role": "system", "content": "You are an assistant that explains code changes for black-box testing."},
-                    {"role": "user", "content": f"Explain the impact of the following code changes for black-box testing:\n\n{changed_lines}"}
+                    {"role": "user", "content": f"Explain the impact of the following code changes for black-box testing, do some anlaysis of code changes and recommend black box testers on what they should focus?, give as bullet points from 3 to 8 and ignote white spaces in code:\n\n{changed_lines}"}
                 ],
                 max_tokens=150
             )
