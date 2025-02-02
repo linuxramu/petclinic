@@ -1,0 +1,58 @@
+<html><head><title>Impact Analysis Report</title><style>body{font-family:sans-serif;padding:20px;}</style></head><body><h1>Impact Analysis Report</h1><p>Generated on 2025-02-03 00:05:51 (IST)</p><pre>
+Impact Analysis Report
+======================
+Changes in src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java:
+Changed Lines:
+diff --git a/src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java b/src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java
+index ae16100..bc26a90 100755
+--- a/src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java
++++ b/src/main/java/org/springframework/samples/petclinic/mapper/PetMapper.java
+@@ -13,6 +13,7 @@ import java.util.Collection;
+ /**
+  * Map Pet & PetDto using mapstruct
+  */
++
+ @Mapper(uses = VisitMapper.class)
+ public interface PetMapper {
+ 
+@@ -36,4 +37,26 @@ public interface PetMapper {
+     PetType toPetType(PetTypeDto petTypeDto);
+ 
+     Collection<PetTypeDto> toPetTypeDtos(Collection<PetType> petTypes);
+-}
++
++    // New mappers added
++
++    @Mapping(source = "visit.id", target = "visitId")
++    VisitDto toVisitDto(Visit visit);
++
++    Collection<VisitDto> toVisitsDto(Collection<Visit> visits);
++
++    @Mapping(source = "visitId", target = "visit.id")
++    Visit toVisit(VisitDto visitDto);
++
++    Collection<Visit> toVisits(Collection<VisitDto> visitDtos);
++
++    @Mapping(source = "vet.id", target = "vetId")
++    VetDto toVetDto(Vet vet);
++
++    Collection<VetDto> toVetsDto(Collection<Vet> vets);
++
++    @Mapping(source = "vetId", target = "vet.id")
++    Vet toVet(VetDto vetDto);
++
++    Collection<Vet> toVets(Collection<VetDto> vetDtos);
++}
+\ No newline at end of file
+
+Explanation:
+- New mappers have been added to the PetMapper interface
+- Mapping annotations have been added to map Visit, Vet, and their DTOs
+- Collection mapping methods have been added for Visit and Vet entities
+- Black box testers should focus on:
+  - Testing the mapping of Visit and Vet entities to their corresponding DTOs
+  - Testing the mapping of DTOs to Visit and Vet entities
+  - Checking the correctness of the mapping annotations and their targets
+  - Testing the collection mapping methods for Visit and Vet entities
+
+</pre></body></html>
