@@ -15,32 +15,33 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 2  # Ensures we have at least two commits
 
       - name: Get Changed Java Files
         id: changed-files
         run: |
-            git fetch --all
-        
-            # Check if we have at least two commits
-            if git rev-parse HEAD^ >/dev/null 2>&1; then
-              CHANGED_FILES=$(git diff --name-only HEAD^ HEAD | grep '\.java$' || true)
-            else
-              echo "Only one commit found, skipping diff check."
-              CHANGED_FILES=""
-            fi
-        
-            echo "changed=$CHANGED_FILES" >> $GITHUB_ENV
-            echo "::set-output name=changed::$CHANGED_FILES"
+          git fetch --all
+
+          # Check if we have at least two commits
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            CHANGED_FILES=$(git diff --name-only HEAD^ HEAD -- '*.java' || true)
+          else
+            echo "Only one commit found, skipping diff check."
+            CHANGED_FILES=""
+          fi
+
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+          echo "::set-output name=changed::$CHANGED_FILES"
         shell: bash
-        
+
+      - name: Display Changed Java Files
+        run: echo "$CHANGED_FILES"
+        shell: bash
 
   impact-analysis:
     name: Analyze Impact of Changes
     needs: setup
     runs-on: ubuntu-latest
-    outputs:
-      analysis_done: ${{ steps.analysis.outputs.done }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -94,7 +95,7 @@ jobs:
 
       - name: Convert Report to HTML
         run: |
-          echo "<html><head><title>Impact Analysis Report</title></head><body><pre>" > index.html
+          echo "<html><head><title>Impact Analysis Report</title><style>body{font-family:sans-serif;padding:20px;}</style></head><body><h1>Impact Analysis Report</h1><pre>" > index.html
           cat impact_analysis_report.txt >> index.html
           echo "</pre></body></html>" >> index.html
         shell: bash
@@ -106,7 +107,7 @@ jobs:
           path: index.html
 
   deploy:
-    name: Update GitHub Pages
+    name: Deploy to GitHub Pages
     needs: generate-report
     runs-on: ubuntu-latest
     steps:
