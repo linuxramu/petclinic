@@ -67,11 +67,9 @@ jobs:
         shell: bash
 
       - name: Generate No Changes Report
-        id: analysis
         if: env.NO_CODE_CHANGES == 'true'
         run: |
           echo "No code changes detected" > impact_analysis_report.txt
-          echo "::set-output name=done::true"
         shell: bash
 
   generate-report:
@@ -81,6 +79,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+
+      - name: Ensure Report File Exists
+        run: |
+          if [ ! -f impact_analysis_report.txt ]; then
+            echo "No code changes detected" > impact_analysis_report.txt
+          fi
+        shell: bash
 
       - name: Convert Report to HTML
         run: |
