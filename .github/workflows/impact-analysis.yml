@@ -6,11 +6,9 @@ on:
       - master
 
 jobs:
-  setup:
-    name: Setup Environment
+  impact-analysis-report:
+    name: Impact Analysis Report
     runs-on: ubuntu-latest
-    outputs:
-      changed_files: ${{ steps.changed-files.outputs.changed }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -38,14 +36,6 @@ jobs:
         run: echo "$CHANGED_FILES"
         shell: bash
 
-  impact-analysis:
-    name: Analyze Impact of Changes
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -57,7 +47,7 @@ jobs:
       - name: Check if Code Changes Exist
         id: check-changes
         run: |
-          if [[ -z "${{ needs.setup.outputs.changed_files }}" ]]; then
+          if [[ -z "${{ steps.changed-files.outputs.changed }}" ]]; then
             echo "NO_CODE_CHANGES=true" >> $GITHUB_ENV
           else
             echo "NO_CODE_CHANGES=false" >> $GITHUB_ENV
@@ -69,22 +59,15 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python analyze_changes.py "${{ needs.setup.outputs.changed_files }}"
+          python analyze_changes.py "${{ steps.changed-files.outputs.changed }}"
         shell: bash
 
       - name: Generate No Changes Report
         if: env.NO_CODE_CHANGES == 'true'
         run: |
-          echo "No code changes detected" > impact_analysis_report.txt
+          TIMESTAMP=$(TZ="Asia/Kolkata" date '+%Y-%m-%d %H:%M:%S')
+          echo "No code changes detected as of $TIMESTAMP" > impact_analysis_report.txt
         shell: bash
-
-  generate-report:
-    name: Generate HTML Report
-    needs: impact-analysis
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
 
       - name: Ensure Report File Exists
         run: |
@@ -95,7 +78,8 @@ jobs:
 
       - name: Convert Report to HTML
         run: |
-          echo "<html><head><title>Impact Analysis Report</title><style>body{font-family:sans-serif;padding:20px;}</style></head><body><h1>Impact Analysis Report</h1><pre>" > index.html
+          TIMESTAMP=$(TZ="Asia/Kolkata" date '+%Y-%m-%d %H:%M:%S')
+          echo "<html><head><title>Impact Analysis Report</title><style>body{font-family:sans-serif;padding:20px;}</style></head><body><h1>Impact Analysis Report</h1><p>Generated on $TIMESTAMP (IST)</p><pre>" > index.html
           cat impact_analysis_report.txt >> index.html
           echo "</pre></body></html>" >> index.html
         shell: bash
@@ -106,20 +90,7 @@ jobs:
           name: impact-analysis-html
           path: index.html
 
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: generate-report
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Download Report Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: impact-analysis-html
-
-      - name: Push to GitHub Pages
+      - name: Deploy to GitHub Pages
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"

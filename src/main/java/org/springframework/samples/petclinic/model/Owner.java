@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// code comments
+// dummy2
 
 package org.springframework.samples.petclinic.model;
 
