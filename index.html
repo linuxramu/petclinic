@@ -1,0 +1,37 @@
+<html><head><title>Impact Analysis Report</title><style>body{font-family:sans-serif;padding:20px;}</style></head><body><h1>Impact Analysis Report</h1><p>Generated on 2025-02-06 11:23:49 (IST)</p><pre>
+Impact Analysis Report
+======================
+Changes in src/main/java/org/springframework/samples/petclinic/mapper/VisitMapper.java:
+Changed Lines:
+diff --git a/src/main/java/org/springframework/samples/petclinic/mapper/VisitMapper.java b/src/main/java/org/springframework/samples/petclinic/mapper/VisitMapper.java
+index 98dc2db..2805d35 100644
+--- a/src/main/java/org/springframework/samples/petclinic/mapper/VisitMapper.java
++++ b/src/main/java/org/springframework/samples/petclinic/mapper/VisitMapper.java
+@@ -25,4 +25,15 @@ public interface VisitMapper {
+ 
+     Collection<VisitDto> toVisitsDto(Collection<Visit> visits);
+ 
++
++    // New mapping for VisitDetailDto to Visit
++    @Mapping(source = "visitDetailId", target = "id")
++    @Mapping(source = "visitDetailPetId", target = "pet.id")
++    Visit toVisitFromDetail(VisitDetailDto visitDetailDto);
++
++    // New mapping for Visit to VisitDetailDto
++    @Mapping(source = "id", target = "visitDetailId")
++    @Mapping(source = "pet.id", target = "visitDetailPetId")
++    VisitDetailDto toVisitDetailDto(Visit visit);
++
+ }
+
+Explanation:
+- Addition of new mapping methods for VisitDetailDto to Visit and vice versa
+- Changes in source and target properties for Visit and VisitDetailDto mapping
+- Potential impact on data transformation and communication between Visit and VisitDetailDto objects
+
+Recommendations for black-box testing focus:
+- Test data transformation accuracy between Visit and VisitDetailDto objects
+- Test if new mapping methods produce correct results
+- Explore edge cases and boundary conditions for mapping conversions
+
+</pre></body></html>
