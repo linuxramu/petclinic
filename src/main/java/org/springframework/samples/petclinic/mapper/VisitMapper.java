@@ -25,4 +25,15 @@ public interface VisitMapper {
 
     Collection<VisitDto> toVisitsDto(Collection<Visit> visits);
 
+
+    // New mapping for VisitDetailDto to Visit
+    @Mapping(source = "visitDetailId", target = "id")
+    @Mapping(source = "visitDetailPetId", target = "pet.id")
+    Visit toVisitFromDetail(VisitDetailDto visitDetailDto);
+
+    // New mapping for Visit to VisitDetailDto
+    @Mapping(source = "id", target = "visitDetailId")
+    @Mapping(source = "pet.id", target = "visitDetailPetId")
+    VisitDetailDto toVisitDetailDto(Visit visit);
+
 }
